@@ -9,7 +9,7 @@ using namespace boost::numeric::odeint;
 const double b = 0.4;
 const double g = 0.04;
 
-const double N = 1000.0;
+double N = 1000.0;
 
 double eta = 0.5;
 double sigma = 1/5.1;
@@ -43,11 +43,14 @@ void sir( const state_type &x , state_type &dxdt , double t )
     dxdt[0] = ( -b *  x[0] * x[1] ) / N;
     dxdt[1] = ( b *  ( x[0] * x[1] ) / N )  - g * x[1];
     dxdt[2] = g * x[1];
+
+    N = x[ 0 ] + x[ 1 ] + x[ 2 ] + x[ 3 ] + x[ 5 ];
+
 }
 
 void write_sir(const state_type &x , const double t )
 {
-    cout << t << ' ' << x[0] << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
+    cout << t << ' ' << x[0] << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << ' ' << x[ 6 ] << endl;
 }
 
 int main(int argc, char **argv)
@@ -55,6 +58,6 @@ int main(int argc, char **argv)
     argc = argc;
     argv = argv;
     //                 S     E    I    A    H    R    D
-    state_type x = { N - 6, 2.0, 3.0, 1.0, 0.0, 0.0, 0.0 }; // initial conditions
-    integrate( masked , x , 0.0 , 100.0 , 0.1 , write_sir );
+    state_type x = { N - 6, 2.0, 3.0, 1.0, 0.0, 1.0, 0.0 }; // initial conditions
+    integrate( masked , x , 0.0 , 200.0 , 0.1 , write_sir );
 }
