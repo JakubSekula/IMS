@@ -1,9 +1,10 @@
 proj = sir
 
 make:
-	@g++ -Wall -Wextra -std=c++17 $(proj).cpp -o $(proj)
+	@g++ -Wall -std=c++17 $(proj).cpp -o $(proj)
 run:
-	@./$(proj) -r 1.0 > sir.out
+	make
+	@./$(proj) -r 1.0 > sir_out
 	@python3 plotit.py
 clean:
 	rm sir
