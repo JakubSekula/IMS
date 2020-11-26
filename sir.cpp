@@ -75,8 +75,50 @@ int main(int argc, char **argv)
     //state_type x(8);
     int population = 60000000;
     double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
+    
     //             S[0]     I[1]              D[2]            A[3]           R[4]        T[5] H[6] E[7]
     state_type x = {S0, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0};
-    integrate( sidarthe, x, 0.0, 350.0, 0.1, write_sidarthe );
+    integrate( sidarthe, x, 0.0, 3.0, 0.1, write_sidarthe );
+
+    alfa = 0.4218;
+    gamma1 = 0.285;
+    beta1 = 0.0057;
+    delta = 0.0057;
+    integrate( sidarthe, x, 3.0, 11.0, 0.1, write_sidarthe );
+
+    epsilon = 0.1425;
+    integrate( sidarthe, x, 11.0, 21.0, 0.1, write_sidarthe );
+
+    alfa=0.36;
+    beta1=0.005;
+    gamma1=0.2;
+    delta=0.005;
+        
+    mu = 0.008;
+    nu = 0.015;
+        
+    zeta=0.034;
+    eta=0.034;
+    
+    lambda=0.08;
+    rho=0.0171;
+    kappa=0.0171;
+    xi=0.0171;
+    sigma=0.0171;
+    integrate( sidarthe, x, 21.0, 27.0, 0.1, write_sidarthe );
+
+    alfa=0.21;
+    gamma1=0.11;
+    integrate( sidarthe, x, 27.0, 37.0, 0.1, write_sidarthe );
+
+    epsilon = 0.2;
+    rho=0.02;
+    kappa=0.02;
+    xi=0.02;
+    sigma=0.01;
+    
+    zeta=0.025;
+    eta=0.025;
+    integrate( sidarthe, x, 37.0, 350.0, 0.1, write_sidarthe );
 
 }
