@@ -11,7 +11,7 @@ double alfa = 0.57;
 // Transmission rate due to contacts with DETECTED asymptomatic infected
 double beta1 = 0.0114;
 // Transmission rate due to contacts with UNDETECTED symptomatic infected
-double gama = 0.456;
+double gamma1 = 0.456;
 // Transmission rate due to contacts with DETECTED symptomatic infected
 double delta = 0.0114;
 
@@ -45,14 +45,20 @@ double xi = 0.0171;
 double sigma = 0.0171;
 
 
-typedef boost::array< double , 8 > state_type;
+typedef boost::array<double, 8> state_type;
 
 void sidarthe( const state_type &x , state_type &dxdt , double t )
 {
-    dxdt[0] = -x[0] * (alfa * x[1] + beta1 * x[2] + gama * x[3] + delta * x[4]);
-    dxdt[1] = x[0] * (alfa * x[1] + beta1 * x[2] + gama * x[3] + delta * x[4]) - (epsilon + xi + lambda) * x[1];
+    // Parameter S needs to be changed in each step of integration
+    // Because Boost's RK requires const parameters, it needs to be modified like this
+    // double *ptr;
+    // ptr = (double*)(&x[0]);
+    // *ptr = 1 - x[1] - x[2] - x[3] - x[4] - x[5] - x[6] - x[7];
+    
+    dxdt[0] = -x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]);
+    dxdt[1] = x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]) - (epsilon + zeta + lambda) * x[1];
     dxdt[2] = epsilon * x[1] - (eta + rho) * x[2];
-    dxdt[3] = xi * x[1] - (theta + mu + kappa) * x[3];
+    dxdt[3] = zeta * x[1] - (theta + mu + kappa) * x[3];
     dxdt[4] = eta * x[2] + theta * x[3] - (nu + xi) * x[4];
     dxdt[5] = mu * x[3] + nu * x[4] - (sigma + tau) * x[5];
     dxdt[6] = lambda * x[1] + rho * x[2] + kappa * x[3] + xi * x[4] + sigma * x[5];
@@ -66,10 +72,11 @@ void write_sidarthe(const state_type &x , const double t )
 
 int main(int argc, char **argv)
 {
-
+    //state_type x(8);
     int population = 60000000;
-    //              S[0]     I[1]              D[2]            A[3]           R[4]        T[5] H[6] E[7]
-    state_type x = {1, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0};
+    double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
+    //             S[0]     I[1]              D[2]            A[3]           R[4]        T[5] H[6] E[7]
+    state_type x = {S0, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0};
     integrate( sidarthe, x, 0.0, 350.0, 0.1, write_sidarthe );
 
 }
