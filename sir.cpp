@@ -43,6 +43,16 @@ double xi = 0.0171;
 // Recovery rate for life-threatened symptomatic infected
 double sigma = 0.0171;
 
+double r1 = epsilon + zeta + lambda;
+
+double r2 = eta + rho + kappa;
+
+double r3 = theta + mu + kappa;
+
+double r4 = nu + xi;
+
+double r5 = sigma + tau;
+
 
 typedef boost::array<double, 8> state_type;
 
@@ -61,6 +71,8 @@ void sidarthe(const state_type &x , state_type &dxdt , double t)
 void write_sidarthe(const state_type &x , const double t)
 {
     cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
+    double R0 = ( alfa / r1 ) + ( ( beta1 * epsilon ) / ( r1 * r2 ) ) + ( ( gamma1 * zeta ) / ( r1 * r3 ) ) + ( ( delta * eta * epsilon ) / ( r1 * r2 * r4 ) ) + ( ( delta * zeta * theta ) / ( r1 * r3 * r4 ) );
+    //cout << R0 << "\n";
 }
 
 int main(int argc, char **argv)
@@ -72,10 +84,28 @@ int main(int argc, char **argv)
     //             S[0]     I[1]              D[2]            A[3]           R[4]        T[5] H[6] E[7]
     state_type x = {S0, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0};
     
-    // Days 0-4
-    integrate(sidarthe, x, 0.0, 4.0, 0.01, write_sidarthe);
 
-    // Days 4-12
+    
+    alfa = 0.36;
+    beta1 = 0.005;
+    gamma1 = 0.2;
+    delta = 0.005;
+        
+    mu = 0.008;
+    nu = 0.015;
+        
+    zeta = 0.034;
+    eta = 0.034;
+    
+    lambda = 0.08;
+    rho = 0.0171;
+    kappa = 0.0171;
+    xi = 0.0171;
+    sigma = 0.0171;
+    // Days 0-4
+    integrate(sidarthe, x, 0.0, 22.0, 0.01, write_sidarthe);
+
+    /* // Days 4-12
     alfa = 0.4218;
     gamma1 = 0.285;
     beta1 = 0.0057;
@@ -119,7 +149,7 @@ int main(int argc, char **argv)
     
     zeta = 0.025;
     eta = 0.025;
-    integrate(sidarthe, x, 38.0, 350.0, 0.01, write_sidarthe);
+    integrate(sidarthe, x, 38.0, 350.0, 0.01, write_sidarthe); */
 
     return 0;
 }

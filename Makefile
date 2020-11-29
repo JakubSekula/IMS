@@ -1,4 +1,4 @@
-proj = sir
+proj = sir3
 
 make:
 	@g++ -Wall -std=c++17 $(proj).cpp -o $(proj)
