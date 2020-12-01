@@ -50,18 +50,26 @@ double infectedCumulated = 0.0;
 
 int graph = 2;
 int days = 350;
+int startd = 50;
 string part = "a";
 
 void getArguments( int argc, char** argv ){
     int arg;
     string temp = "";
-    while( ( arg = getopt( argc, argv, "g:p:d:h" ) ) != -1 ){
+    while( ( arg = getopt( argc, argv, "g:p:d:s:h" ) ) != -1 ){
         switch( arg ){
             case 'g':
                 graph = atoi( optarg );
                 break;
             case 'p':
                 part = optarg;
+                break;
+            case 's':
+                startd = atoi( optarg );
+                if( startd <= 38 ){
+                    fprintf( stderr, "Start day must be greater then 38\n" );
+                    exit( 10 ); 
+                }
                 break;
             case 'd':
                 days = atoi( optarg );
@@ -71,7 +79,7 @@ void getArguments( int argc, char** argv ){
                 }
                 break;
             case 'h':
-                cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -d Number of days in simulation\n";
+                cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation\n";
                 exit( 0 );
             default:
                 fprintf( stderr, "Uknown argument\n" );
@@ -181,10 +189,6 @@ void threeab(){
     kappa = 0.0200*1;
     xi = 0.0200*1;
     sigma = 0.0100*1;
-}
-
-void twoab(){
-
 }
 
 void twocd(){
@@ -297,13 +301,13 @@ int main(int argc, char **argv)
 
     zeta = 0.025;
     eta = 0.025;
-    integrate( sidarthe, x, 38.0, 50.0, 0.01, write_sidarthe );
+    integrate( sidarthe, x, 38.0, ( double ) startd, 0.01, write_sidarthe );
 
     // Days 50 - 350
 
     if( graph == 2 ){
         if( part == "a" || part == "b" ){
-            twoab();
+            twocd();
         } else {
             twocd();
         }
@@ -321,7 +325,7 @@ int main(int argc, char **argv)
         }
     }
     
-    integrate( sidarthe, x, 50.0, ( double )days, 0.01, write_sidarthe );
+    integrate( sidarthe, x, ( double ) startd, ( double ) days, 0.01, write_sidarthe );
 
     return 0;
 } 
