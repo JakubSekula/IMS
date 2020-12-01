@@ -6,10 +6,6 @@
 using namespace std;
 using namespace boost::numeric::odeint;
 
-
-#define EARLY twocd(); \
-            integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
-
 // Transmission rate due to contacts with UNDETECTED asymptomatic infected
 double alfa = 0.57;
 // Transmission rate due to contacts with DETECTED asymptomatic infected
@@ -56,7 +52,7 @@ int graph = 2;
 int days = 350;
 int startd = 50;
 string part = "a";
-string pr = "";
+string r = "";
 
 void getArguments( int argc, char** argv ){
     int arg;
@@ -70,7 +66,7 @@ void getArguments( int argc, char** argv ){
                 part = optarg;
                 break;
             case 'r':
-                pr = optarg;
+                r = optarg;
                 break;
             case 's':
                 startd = atoi( optarg );
@@ -87,7 +83,7 @@ void getArguments( int argc, char** argv ){
                 }
                 break;
             case 'h':
-                cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation\n";
+                cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation -r restrictions(pr|rst)\n";
                 exit( 0 );
             default:
                 fprintf( stderr, "Uknown argument\n" );
@@ -340,9 +336,14 @@ int main(int argc, char **argv)
     
     integrate( sidarthe, x, ( double ) startd, ( double ) days, 0.01, write_sidarthe );
 
-    if( pr == "pr" ){
-        alfa = 0.2100 * 1.7; 
-        EARLY;
+    if( r == "pr" ){
+        twocd();
+        alfa = 0.2100 * 1.2;
+        integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
+    } else if ( r == "rst" ){
+        twocd();
+        alfa = 0.2100 * 0.2;
+        integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
     }
 
     return 0;
