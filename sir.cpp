@@ -6,6 +6,10 @@
 using namespace std;
 using namespace boost::numeric::odeint;
 
+
+#define EARLY twocd(); \
+            integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
+
 // Transmission rate due to contacts with UNDETECTED asymptomatic infected
 double alfa = 0.57;
 // Transmission rate due to contacts with DETECTED asymptomatic infected
@@ -52,17 +56,21 @@ int graph = 2;
 int days = 350;
 int startd = 50;
 string part = "a";
+string pr = "";
 
 void getArguments( int argc, char** argv ){
     int arg;
     string temp = "";
-    while( ( arg = getopt( argc, argv, "g:p:d:s:h" ) ) != -1 ){
+    while( ( arg = getopt( argc, argv, "g:p:d:s:hr:" ) ) != -1 ){
         switch( arg ){
             case 'g':
                 graph = atoi( optarg );
                 break;
             case 'p':
                 part = optarg;
+                break;
+            case 'r':
+                pr = optarg;
                 break;
             case 's':
                 startd = atoi( optarg );
@@ -90,6 +98,11 @@ void getArguments( int argc, char** argv ){
     if( argc == 1 ){
         cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -d Number of days in simulation\n";
                 exit( 0 );
+    }
+
+    if( startd >= days ){
+        fprintf( stderr, "Day when countermeasures start must be smaller then day when they end\n" );
+        exit( 10 );
     }
 
 }
@@ -239,7 +252,7 @@ void write_sidarthe(const state_type &x , const double t)
     if( part == "a" || part == "c" ){
         cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << H_diagnosticati << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + H_diagnosticati << endl;
     } else {
-        cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
+        cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << ' ' << x[ 6 ]  << endl;
     }
 }
 
@@ -326,6 +339,11 @@ int main(int argc, char **argv)
     }
     
     integrate( sidarthe, x, ( double ) startd, ( double ) days, 0.01, write_sidarthe );
+
+    if( pr == "pr" ){
+        alfa = 0.2100 * 1.7; 
+        EARLY;
+    }
 
     return 0;
 } 
