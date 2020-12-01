@@ -92,7 +92,7 @@ void getArguments( int argc, char** argv ){
     }
 
     if( argc == 1 ){
-        cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -d Number of days in simulation\n";
+        cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation -r restrictions(pr|rst)\n";
                 exit( 0 );
     }
 
