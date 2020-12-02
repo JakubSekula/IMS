@@ -6,14 +6,16 @@
 using namespace std;
 using namespace boost::numeric::odeint;
 
+double agerisk = 1.00;
+
 // Transmission rate due to contacts with UNDETECTED asymptomatic infected
-double alfa = 0.57;
+double alfa = agerisk *  0.57;
 // Transmission rate due to contacts with DETECTED asymptomatic infected
-double beta1 = 0.0114;
+double beta1 = agerisk *  0.0114;
 // Transmission rate due to contacts with UNDETECTED symptomatic infected
-double gamma1 = 0.456;
+double gamma1 = agerisk *  0.456;
 // Transmission rate due to contacts with DETECTED symptomatic infected
-double delta = 0.0114;
+double delta = agerisk *  0.0114;
 
 // Detection rate for ASYMPTOMATIC
 double epsilon = 0.171;
@@ -53,14 +55,21 @@ int days = 350;
 int startd = 50;
 string part = "a";
 string r = "";
+double population = 60000000;
 
 void getArguments( int argc, char** argv ){
     int arg;
     string temp = "";
-    while( ( arg = getopt( argc, argv, "g:p:d:s:hr:" ) ) != -1 ){
+    while( ( arg = getopt( argc, argv, "g:p:d:s:hr:n:a:" ) ) != -1 ){
         switch( arg ){
             case 'g':
                 graph = atoi( optarg );
+                break;
+            case 'a':
+                agerisk = atof( optarg );
+                break;
+            case 'n':
+                population = (double) atoi( optarg );
                 break;
             case 'p':
                 part = optarg;
@@ -104,10 +113,10 @@ void getArguments( int argc, char** argv ){
 }
 
 void fourcd(){
-    alfa = 0.2100*2;
-    beta1 = 0.0050*1;
-    gamma1 = 0.1100*1;
-    delta = 0.0050*1;
+    alfa = agerisk *  0.2100*2;
+    beta1 = agerisk *  0.0050*1;
+    gamma1 = agerisk *  0.1100*1;
+    delta = agerisk *  0.0050*1;
     
     epsilon = 0.2000*3;
     theta = 0.3705*1;
@@ -118,7 +127,6 @@ void fourcd(){
     mu = 0.008*1;
     nu = 0.0150*1;
     
-    tau = 0.0100*1;
     
     lambda = 0.0800*1;
     rho = 0.0200*1;
@@ -129,10 +137,10 @@ void fourcd(){
 }
 
 void fourab(){
-    alfa = 0.2100*1;
-    beta1 = 0.0050*1;
-    gamma1 = 0.1100*1;
-    delta = 0.0050*1;
+    alfa = agerisk *  0.2100*1;
+    beta1 = agerisk *  0.0050*1;
+    gamma1 = agerisk *  0.1100*1;
+    delta = agerisk *  0.0050*1;
     
     epsilon = 0.2000*2;
     theta = 0.3705*1;
@@ -143,7 +151,6 @@ void fourab(){
     mu = 0.008*1;
     nu = 0.0150*1;
     
-    tau = 0.0100*1;
     
     lambda = 0.0800*1;
     rho = 0.0200*1;
@@ -153,10 +160,10 @@ void fourab(){
 }
 
 void threecd(){
-    alfa = 0.2100*0.5;
-    beta1 = 0.0050*1;
-    gamma1 = 0.1100*1;
-    delta = 0.0050*1;
+    alfa = agerisk *  0.2100*0.5;
+    beta1 = agerisk *  0.0050*1;
+    gamma1 = agerisk *  0.1100*1;
+    delta = agerisk *  0.0050*1;
     
     epsilon = 0.2000*1;
     theta = 0.3705*1;
@@ -167,8 +174,7 @@ void threecd(){
     mu = 0.008*1;
     nu = 0.0150*1;
     
-    tau = 0.0100*1;
-    
+
     lambda = 0.0800*1;
     rho = 0.0200*1;
     kappa = 0.0200*1;
@@ -177,10 +183,10 @@ void threecd(){
 }
 
 void threeab(){
-    alfa = 0.2100*1.2;
-    beta1 = 0.0050*1;
-    gamma1 = 0.1100*1;
-    delta = 0.0050*1;
+    alfa = agerisk *  0.2100*1.2;
+    beta1 = agerisk *  0.0050*1;
+    gamma1 = agerisk *  0.1100*1;
+    delta = agerisk *  0.0050*1;
     
     epsilon = 0.2000*1;
     theta = 0.3705*1;
@@ -191,7 +197,6 @@ void threeab(){
     mu = 0.008*1;
     nu = 0.0150*1;
     
-    tau = 0.0100*1;
     
     lambda = 0.0800*1;
     rho = 0.0200*1;
@@ -201,9 +206,9 @@ void threeab(){
 }
 
 void twocd(){
-    alfa = 0.2100*1;
-    beta1 = 0.0050*1;
-    gamma1 = 0.1100*1;
+    alfa = agerisk *  0.2100*1;
+    beta1 = agerisk *  0.0050*1;
+    gamma1 = agerisk *  0.1100*1;
     delta=0.0050*1;
     
     epsilon = 0.2000*1;
@@ -214,9 +219,7 @@ void twocd(){
     
     mu = 0.008*1;
     nu = 0.0150*1;
-    
-    tau = 0.0100*1;
-    
+        
     lambda = 0.0800*1;
     rho = 0.0200*1;
     kappa = 0.0200*1;
@@ -247,6 +250,9 @@ void write_sidarthe(const state_type &x , const double t)
 
     if( part == "a" || part == "c" ){
         cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << H_diagnosticati << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + H_diagnosticati << endl;
+        //cout << t << ' ' << x[ 7 ] * population << endl;
+        //cout << t << ' ' << infectedCumulated * 60000000 << ' ' << x[ 7 ] * 60000000 << endl;
+
     } else {
         cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
     }
@@ -257,7 +263,6 @@ int main(int argc, char **argv)
 
     getArguments( argc, argv );
 
-    double population = 60000000;
     double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
 
     // Initial state
@@ -267,10 +272,10 @@ int main(int argc, char **argv)
     integrate(sidarthe, x, 0.0, 4.0, 0.01, write_sidarthe);
 
     // Days 4-12
-    alfa = 0.4218;
-    gamma1 = 0.285;
-    beta1 = 0.0057;
-    delta = 0.0057;
+    alfa = agerisk *  0.4218;
+    gamma1 = agerisk *  0.285;
+    beta1 = agerisk *  0.0057;
+    delta = agerisk *  0.0057;
     integrate(sidarthe, x, 4.0, 12.0, 0.01, write_sidarthe);
 
     // Days 12-22
@@ -278,10 +283,10 @@ int main(int argc, char **argv)
     integrate(sidarthe, x, 12.0, 22.0, 0.01, write_sidarthe);
 
     // Days 22-28
-    alfa = 0.36;
-    beta1 = 0.005;
-    gamma1 = 0.2;
-    delta = 0.005;
+    alfa = agerisk *  0.36;
+    beta1 = agerisk *  0.005;
+    gamma1 = agerisk *  0.2;
+    delta = agerisk *  0.005;
 
     mu = 0.008;
     nu = 0.015;
@@ -297,8 +302,8 @@ int main(int argc, char **argv)
     integrate(sidarthe, x, 22.0, 28.0, 0.01, write_sidarthe);
 
     // Days 28-38
-    alfa = 0.21;
-    gamma1 = 0.11;
+    alfa = agerisk *  0.21;
+    gamma1 = agerisk *  0.11;
     integrate(sidarthe, x, 28.0, 38.0, 0.01, write_sidarthe);
 
     // Days 38 - 50
@@ -338,11 +343,11 @@ int main(int argc, char **argv)
 
     if( r == "pr" ){
         twocd();
-        alfa = 0.2100 * 1.2;
+        alfa = agerisk *  0.2100 * 1.2;
         integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
     } else if ( r == "rst" ){
         twocd();
-        alfa = 0.2100 * 0.2;
+        alfa = agerisk *  0.2100 * 0.2;
         integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
     }
 
