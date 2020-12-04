@@ -167,9 +167,11 @@ void write_sidarthe(const state_type &x , const double t) {
     
     // Deaths and cumulated cases
     } else if (format == 3) {
+        cout << t << ' ' << x[7] * population << ' ' << x[9] * population << endl;
 
     // Deaths only
     } else {
+        cout << t << ' ' << x[7] * population << endl;
 
     } 
 }
