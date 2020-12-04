@@ -1,3 +1,14 @@
+/**
+ * IMS projekt 2020/2021
+ * Zadanie: Téma č. 2: Epidemiologické modely - modely na makroúrovni
+ * Autori: Martin Fekete <xfeket00@fit.vutbr.cz>
+ *         Jakub Sekula <xsekul01@fit.vutbr.cz>
+ * 
+ * Hodnoty konštant alfa, beta,... sigma sú nastavené podľa kódu
+ * na konci: https://www.nature.com/articles/s41591-020-0883-7
+ */
+
+
 #include <iostream>
 #include <string>
 #include <boost/array.hpp>
@@ -50,10 +61,23 @@ double population = 60000000;
 vector<int> restrictions;
 vector<int> days;
 int end_day;
-int cumulated;
+int format;
 
-typedef boost::array<double, 10> state_type;
+// Array that will contain current info about pandemy
+typedef boost::array <double, 10> state_type;
 
+void print_help() {
+    cout << "Usage: ./ims -d days_array -r restriction_array -e end_day -c cumulated\n";
+    cout << "-d days_array : days, when new restrictions are introduced separated by ','\n";
+    cout << "-r restriction_array : codes of newly introduced restrictions separated by ',', codes are explained in doc\n";
+    cout << "-e end_day : end of simulation\n";
+    cout << "-f format : constant specifying output format, explained doc\n";
+    cout << "Example: ./ims -d 4,12,22,28,38,50 -r 1,2,3,4,5,7 -e 350 -c 1\n";
+    exit(0);
+}
+
+// Converts arguments separated by ',' to vector
+// E.g. arg string 10,20,30,50 is converted to vector <10 | 50 | 30 | 50>
 void arg_to_vect(const string &str, vector<int> &result) {
     size_t prev = 0, pos = 0;
 
@@ -70,9 +94,13 @@ void arg_to_vect(const string &str, vector<int> &result) {
     }
 }
 
-void getArguments(int argc, char** argv){
+
+/**
+ * Argument parse
+ */
+void get_args(int argc, char** argv){
     int arg;
-    while ((arg = getopt(argc, argv, "d:r:e:c:h")) != -1) {
+    while ((arg = getopt(argc, argv, "d:r:e:f:h")) != -1) {
         switch(arg) {
             case 'd':
                 arg_to_vect(optarg, days);
@@ -83,29 +111,31 @@ void getArguments(int argc, char** argv){
             case 'e':
                 end_day = atoi(optarg);
                 break;
-            case 'c':
-                cumulated = atoi(optarg);
+            case 'f':
+                format = atoi(optarg);
                 break;
             case 'h':
-                cout << "Usage\n";
-                exit(0);
+                print_help();
             default:
-                fprintf(stderr, "Uknown argument\n");
-                exit(10);
+                cerr << "Uknown argument\n";
+                print_help();
         }
     }
 
     if (argc < 4) {
-        cout << "Usage\n";
-        exit(0);
+        print_help();
     }
 
     if (days.size() != restrictions.size()) {
-        cout << "Number of restrictions should be the same as number of days\n";
+        cerr << "Number of restrictions should be the same as number of days\n";
         exit(0);
     }
 }
 
+
+/**
+ * Differential equations defining SIDARTHE model
+ */
 void sidarthe(const state_type &x , state_type &dxdt , double t) {
     dxdt[0] = -x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]);
     dxdt[1] = x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]) - (epsilon + zeta + lambda) * x[1];
@@ -119,15 +149,34 @@ void sidarthe(const state_type &x , state_type &dxdt , double t) {
     dxdt[9] = x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]);
 }
 
+
+/**
+ * Writes current state of integration to stdout
+ * If argument -c is set to nonzero value, cumulated numbers are written
+ * Otherwise actual cases in given time are written
+ */
 void write_sidarthe(const state_type &x , const double t) {
+    
     // Write cumulated numbers
-    if (cumulated != 0){
+    if (format == 1) {
         cout << t << ' ' << x[9] << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << x[8] << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + x[8] << endl;
+    
     // Write actual cases
-    } else {
+    } else if (format == 2) {
         cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
-    }
+    
+    // Deaths and cumulated cases
+    } else if (format == 3) {
+
+    // Deaths only
+    } else {
+
+    } 
 }
+
+
+// -----------------------------------
+// ----------- RESTRICTIONS ----------
 
 // No restrictions at all
 // Days 0-4 in original simulation
@@ -297,7 +346,7 @@ void restriction8() {
 // Weakened lockdown with widespread testing
 void restriction9() {
     restriction5();
-    alfa = 0.21;
+    alfa = 0.21*2;
     beta1 = 0.005;
     gamma1 = 0.11;
     delta = 0.005;
@@ -320,6 +369,11 @@ void restriction9() {
     sigma = 0.01;
 }
 
+
+/**
+ * Sets restrictions given in argument
+ * Strength of restrictions is specified in docu
+ */
 void set_restriction(int restriction) {
     if (restriction == 0) {
         restriction0();
@@ -344,11 +398,9 @@ void set_restriction(int restriction) {
     }
 }
 
-int main(int argc, char **argv)
-{
-
-    getArguments(argc, argv);
-
+int main(int argc, char **argv) {
+    
+    get_args(argc, argv);
     double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
     
     // Initial state
@@ -358,9 +410,11 @@ int main(int argc, char **argv)
     double start_integrate = 0.0;
     double end_integrate = days.at(0);
     
+    // 0 - day of first restriction
     set_restriction(0);
     integrate(sidarthe, x, 0.0, end_integrate, 0.01, write_sidarthe);
     
+    // Setting restrictions and simulatiog
     for (int i = 0; i < (int) days.size(); i++) {
         
         if (i == (int) days.size() - 1) {
