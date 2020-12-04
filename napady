@@ -1,4 +1,0 @@
-zmeny nastupu opatreni || -s
-mrtvi
-predcasne rozvoleni -r pr -d den odky se rozvolnuje ./sir -p c -g 3 -d 70 -s 50 -r pr > sir_out
-tvrdy lockdown po N dni parametr -r rst -d den odkdy se pritvrzuje ./sir -p b -g 3 -d 70 -s 50 -r rst > sir_out

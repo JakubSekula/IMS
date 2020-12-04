@@ -49,6 +49,12 @@ double sigma = 0.0171;
 double H_diagnosticati = 0.0;
 double infectedCumulated = 0.0;
 
+double r1 = epsilon + zeta + lambda;
+double r2 = eta + rho;
+double r3 = theta + mu + kappa;
+double r4 = nu + xi;
+double R0;
+
 
 int graph = 2;
 int days = 350;
@@ -252,9 +258,10 @@ void write_sidarthe(const state_type &x , const double t)
         cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << H_diagnosticati << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + H_diagnosticati << endl;
         //cout << t << ' ' << x[ 7 ] * population << endl;
         //cout << t << ' ' << infectedCumulated * 60000000 << ' ' << x[ 7 ] * 60000000 << endl;
-
+        //cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << endl;
     } else {
         cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
+        //cout << t << ' ' << x[1] << endl;
     }
 }
 

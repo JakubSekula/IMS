@@ -4,7 +4,7 @@ from matplotlib.pyplot import figure
 
 plt.style.use("ggplot")
 
-sir_out = pd.read_csv("sir_out",sep=" ",header=None,names=["t","S","I","DE","D","R","T","H"],index_col=False)
+sir_out = pd.read_csv("ims_out",sep=" ",header=None,names=["t","S","I","DE","D","R","T","H"],index_col=False)
 
 #sline = plt.plot("t","S","",data=sir_out,color="red",linewidth=1)
 iline = plt.plot("t","S","",data=sir_out,color="blue",linewidth=1, label='Cumulative infected' )

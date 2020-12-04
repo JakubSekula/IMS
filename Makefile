@@ -1,4 +1,4 @@
-proj = sir
+proj = ims
 
 make:
 	@g++ -Wall -std=c++17 $(proj).cpp -o $(proj)
@@ -9,5 +9,5 @@ run:
 	@python3 plotit.py
 
 clean:
-	rm sir
-	rm sir_out
+	rm $(proj)
+	rm $(proj)_out
