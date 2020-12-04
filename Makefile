@@ -1,4 +1,4 @@
-proj = ims
+proj = ims2
 
 make:
 	@g++ -Wall -std=c++17 $(proj).cpp -o $(proj)

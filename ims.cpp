@@ -9,13 +9,13 @@ using namespace boost::numeric::odeint;
 double agerisk = 1.00;
 
 // Transmission rate due to contacts with UNDETECTED asymptomatic infected
-double alfa = agerisk *  0.57;
+double alfa = agerisk * 0.57;
 // Transmission rate due to contacts with DETECTED asymptomatic infected
-double beta1 = agerisk *  0.0114;
+double beta1 = agerisk * 0.0114;
 // Transmission rate due to contacts with UNDETECTED symptomatic infected
-double gamma1 = agerisk *  0.456;
+double gamma1 = agerisk * 0.456;
 // Transmission rate due to contacts with DETECTED symptomatic infected
-double delta = agerisk *  0.0114;
+double delta = agerisk * 0.0114;
 
 // Detection rate for ASYMPTOMATIC
 double epsilon = 0.171;
@@ -46,197 +46,67 @@ double xi = 0.0171;
 // Recovery rate for life-threatened symptomatic infected
 double sigma = 0.0171;
 
-double H_diagnosticati = 0.0;
-double infectedCumulated = 0.0;
-
-double r1 = epsilon + zeta + lambda;
-double r2 = eta + rho;
-double r3 = theta + mu + kappa;
-double r4 = nu + xi;
-double R0;
-
-
-int graph = 2;
-int days = 350;
-int startd = 50;
-string part = "a";
-string r = "";
 double population = 60000000;
-
-void getArguments( int argc, char** argv ){
-    int arg;
-    string temp = "";
-    while( ( arg = getopt( argc, argv, "g:p:d:s:hr:n:a:" ) ) != -1 ){
-        switch( arg ){
-            case 'g':
-                graph = atoi( optarg );
-                break;
-            case 'a':
-                agerisk = atof( optarg );
-                break;
-            case 'n':
-                population = (double) atoi( optarg );
-                break;
-            case 'p':
-                part = optarg;
-                break;
-            case 'r':
-                r = optarg;
-                break;
-            case 's':
-                startd = atoi( optarg );
-                if( startd <= 38 ){
-                    fprintf( stderr, "Start day must be greater then 38\n" );
-                    exit( 10 ); 
-                }
-                break;
-            case 'd':
-                days = atoi( optarg );
-                if( days < 50 ){
-                    fprintf( stderr, "Number of days must be greater than 50\n" );
-                    exit( 10 );    
-                }
-                break;
-            case 'h':
-                cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation -r restrictions(pr|rst)\n";
-                exit( 0 );
-            default:
-                fprintf( stderr, "Uknown argument\n" );
-                exit( 10 );
-        }
-    }
-
-    if( argc == 1 ){
-        cout << "Usage\n./sir -g Graph number -p 'a|b|c|d' -s start of countermeasures( day ) -d Number of days in simulation -r restrictions(pr|rst)\n";
-                exit( 0 );
-    }
-
-    if( startd >= days ){
-        fprintf( stderr, "Day when countermeasures start must be smaller then day when they end\n" );
-        exit( 10 );
-    }
-
-}
-
-void fourcd(){
-    alfa = agerisk *  0.2100*2;
-    beta1 = agerisk *  0.0050*1;
-    gamma1 = agerisk *  0.1100*1;
-    delta = agerisk *  0.0050*1;
-    
-    epsilon = 0.2000*3;
-    theta = 0.3705*1;
-    
-    zeta = 0.0250*1;
-    eta = 0.0250*1;
-    
-    mu = 0.008*1;
-    nu = 0.0150*1;
-    
-    
-    lambda = 0.0800*1;
-    rho = 0.0200*1;
-    kappa = 0.0200*1;
-    xi = 0.0200*1;
-    sigma = 0.0100*1;
-
-}
-
-void fourab(){
-    alfa = agerisk *  0.2100*1;
-    beta1 = agerisk *  0.0050*1;
-    gamma1 = agerisk *  0.1100*1;
-    delta = agerisk *  0.0050*1;
-    
-    epsilon = 0.2000*2;
-    theta = 0.3705*1;
-    
-    zeta = 0.0250*1;
-    eta = 0.0250*1;
-    
-    mu = 0.008*1;
-    nu = 0.0150*1;
-    
-    
-    lambda = 0.0800*1;
-    rho = 0.0200*1;
-    kappa = 0.0200*1;
-    xi = 0.0200*1;
-    sigma = 0.0100*1;
-}
-
-void threecd(){
-    alfa = agerisk *  0.2100*0.5;
-    beta1 = agerisk *  0.0050*1;
-    gamma1 = agerisk *  0.1100*1;
-    delta = agerisk *  0.0050*1;
-    
-    epsilon = 0.2000*1;
-    theta = 0.3705*1;
-    
-    zeta = 0.0250*1;
-    eta = 0.0250*1;
-    
-    mu = 0.008*1;
-    nu = 0.0150*1;
-    
-
-    lambda = 0.0800*1;
-    rho = 0.0200*1;
-    kappa = 0.0200*1;
-    xi = 0.0200*1;
-    sigma = 0.0100*1;
-}
-
-void threeab(){
-    alfa = agerisk *  0.2100*1.2;
-    beta1 = agerisk *  0.0050*1;
-    gamma1 = agerisk *  0.1100*1;
-    delta = agerisk *  0.0050*1;
-    
-    epsilon = 0.2000*1;
-    theta = 0.3705*1;
-    
-    zeta = 0.0250*1;
-    eta = 0.0250*1;
-    
-    mu = 0.008*1;
-    nu = 0.0150*1;
-    
-    
-    lambda = 0.0800*1;
-    rho = 0.0200*1;
-    kappa = 0.0200*1;
-    xi = 0.0200*1;
-    sigma = 0.0100*1;
-}
-
-void twocd(){
-    alfa = agerisk *  0.2100*1;
-    beta1 = agerisk *  0.0050*1;
-    gamma1 = agerisk *  0.1100*1;
-    delta=0.0050*1;
-    
-    epsilon = 0.2000*1;
-    theta = 0.3705*1;
-    
-    zeta = 0.0250*1;
-    eta = 0.0250*1;
-    
-    mu = 0.008*1;
-    nu = 0.0150*1;
-        
-    lambda = 0.0800*1;
-    rho = 0.0200*1;
-    kappa = 0.0200*1;
-    xi = 0.0200*1;
-    sigma = 0.0100*1;
-}
+vector<int> restrictions;
+vector<int> days;
+int end_day;
+int cumulated;
 
 typedef boost::array<double, 10> state_type;
 
-void sidarthe(const state_type &x , state_type &dxdt , double t)
-{
+void arg_to_vect(const string &str, vector<int> &result) {
+    size_t prev = 0, pos = 0;
+
+    while (pos < str.length() && prev < str.length()) {
+
+        pos = str.find(',', prev);
+        if (pos == string::npos) {
+            pos = str.length();
+        }
+
+        string token = str.substr(prev, pos-prev);
+        result.push_back(atoi(token.c_str()));
+        prev = pos + 1;
+    }
+}
+
+void getArguments(int argc, char** argv){
+    int arg;
+    while ((arg = getopt(argc, argv, "d:r:e:c:h")) != -1) {
+        switch(arg) {
+            case 'd':
+                arg_to_vect(optarg, days);
+                break;
+            case 'r':
+                arg_to_vect(optarg, restrictions);
+                break;
+            case 'e':
+                end_day = atoi(optarg);
+                break;
+            case 'c':
+                cumulated = atoi(optarg);
+                break;
+            case 'h':
+                cout << "Usage\n";
+                exit(0);
+            default:
+                fprintf(stderr, "Uknown argument\n");
+                exit(10);
+        }
+    }
+
+    if (argc < 4) {
+        cout << "Usage\n";
+        exit(0);
+    }
+
+    if (days.size() != restrictions.size()) {
+        cout << "Number of restrictions should be the same as number of days\n";
+        exit(0);
+    }
+}
+
+void sidarthe(const state_type &x , state_type &dxdt , double t) {
     dxdt[0] = -x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]);
     dxdt[1] = x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]) - (epsilon + zeta + lambda) * x[1];
     dxdt[2] = epsilon * x[1] - (eta + rho) * x[2];
@@ -249,51 +119,67 @@ void sidarthe(const state_type &x , state_type &dxdt , double t)
     dxdt[9] = x[0] * (alfa * x[1] + beta1 * x[2] + gamma1 * x[3] + delta * x[4]);
 }
 
-void write_sidarthe(const state_type &x , const double t)
-{
-    H_diagnosticati = x[ 8 ];
-    infectedCumulated =  x[ 9 ];
-
-    if( part == "a" || part == "c" ){
-        cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << H_diagnosticati << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + H_diagnosticati << endl;
-        //cout << t << ' ' << x[ 7 ] * population << endl;
-        //cout << t << ' ' << infectedCumulated * 60000000 << ' ' << x[ 7 ] * 60000000 << endl;
-        //cout << t << ' ' << infectedCumulated << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << endl;
+void write_sidarthe(const state_type &x , const double t) {
+    // Write cumulated numbers
+    if (cumulated != 0){
+        cout << t << ' ' << x[9] << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << x[8] << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + x[8] << endl;
+    // Write actual cases
     } else {
         cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
-        //cout << t << ' ' << x[1] << endl;
     }
 }
 
-int main(int argc, char **argv)
-{
+// No restrictions at all
+// Days 0-4 in original simulation
+void restriction0() {
+    alfa = agerisk * 0.57;
+    beta1 = agerisk * 0.0114;
+    gamma1 = agerisk * 0.456;
+    delta = agerisk * 0.0114;
 
-    getArguments( argc, argv );
+    epsilon = 0.171;
+    theta = 0.3705;
 
-    double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
+    zeta = 0.1254;
+    eta = 0.1254;
 
-    // Initial state
-    //             S[0]     I[1]              D[2]            A[3]           R[4]        T[5] H[6] E[7]    8    9
-    state_type x = {S0, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0, 0.0, 0.0};
+    mu = 0.0171;
+    nu = 0.0274;
+    tau = 0.01;
 
-    integrate(sidarthe, x, 0.0, 4.0, 0.01, write_sidarthe);
+    lambda = 0.0342;
+    rho = 0.0342;
+    kappa = 0.0171;
+    xi = 0.0171;
+    sigma = 0.0171;
+}
 
-    // Days 4-12
-    alfa = agerisk *  0.4218;
-    gamma1 = agerisk *  0.285;
-    beta1 = agerisk *  0.0057;
-    delta = agerisk *  0.0057;
-    integrate(sidarthe, x, 4.0, 12.0, 0.01, write_sidarthe);
+// Basic social distancing (awareness, schools closed)
+// Days 4-12 in original simulation
+void restriction1() {
+    restriction0();
+    alfa = agerisk * 0.4218;
+    beta1 = agerisk * 0.0057;
+    gamma1 = agerisk * 0.285;
+    delta = agerisk * 0.0057;
+}
 
-    // Days 12-22
+// Screening limited to / focused on symptomatic subjects
+// Days 12-22 in original simulation
+void restriction2() {
+    restriction1();
     epsilon = 0.1425;
-    integrate(sidarthe, x, 12.0, 22.0, 0.01, write_sidarthe);
+}
 
-    // Days 22-28
-    alfa = agerisk *  0.36;
-    beta1 = agerisk *  0.005;
-    gamma1 = agerisk *  0.2;
-    delta = agerisk *  0.005;
+// Social distancing: mild lockdown
+// Days 22-28 in original simulation
+void restriction3() {
+    restriction2();
+    alfa = agerisk * 0.36;
+    beta1 = agerisk * 0.005;
+    gamma1 = agerisk * 0.2;
+    delta = agerisk * 0.005;
+    epsilon = 0.1425;
 
     mu = 0.008;
     nu = 0.015;
@@ -306,56 +192,187 @@ int main(int argc, char **argv)
     kappa = 0.0171;
     xi = 0.0171;
     sigma = 0.0171;
-    integrate(sidarthe, x, 22.0, 28.0, 0.01, write_sidarthe);
+}
 
-    // Days 28-38
-    alfa = agerisk *  0.21;
-    gamma1 = agerisk *  0.11;
-    integrate(sidarthe, x, 28.0, 38.0, 0.01, write_sidarthe);
+// Social distancing: strong lockdown
+// Days 28-38 in original simulation
+void restriction4() {
+    restriction3();
+    alfa = agerisk * 0.21;
+    gamma1 = agerisk * 0.11;
+}
 
-    // Days 38 - 50
-    epsilon = 0.2; 
+// Broader diagnosis campaign
+// Days 38-50 in original simulation
+void restriction5() {
+    restriction4();
+    epsilon = 0.2;
     rho = 0.02;
     kappa = 0.02;
     xi = 0.02;
     sigma = 0.01;
-
+        
     zeta = 0.025;
     eta = 0.025;
-    integrate( sidarthe, x, 38.0, ( double ) startd, 0.01, write_sidarthe );
+}
 
-    // Days 50 - 350
-
-    if( graph == 2 ){
-        if( part == "a" || part == "b" ){
-            twocd();
-        } else {
-            twocd();
-        }
-    } else if ( graph == 3 ){
-        if( part == "a" || part == "b" ){
-            threeab();
-        } else {
-            threecd();
-        }
-    } else if ( graph == 4 ){
-        if( part == "a" || part == "b" ){
-            fourab();
-        } else {
-            fourcd();
-        }
-    }
+// Strengthened lockdown
+void restriction6() {
+    restriction5();
+    alfa = agerisk * 0.21*0.5;
+    beta1 = agerisk * 0.005;
+    gamma1 = agerisk * 0.11;
+    delta = agerisk * 0.005;
     
-    integrate( sidarthe, x, ( double ) startd, ( double ) days, 0.01, write_sidarthe );
+    epsilon = 0.2;
+    theta = 0.3705;
+    
+    zeta = 0.025;
+    eta = 0.025;
+    
+    mu = 0.008;
+    nu = 0.015;
 
-    if( r == "pr" ){
-        twocd();
-        alfa = agerisk *  0.2100 * 1.2;
-        integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
-    } else if ( r == "rst" ){
-        twocd();
-        alfa = agerisk *  0.2100 * 0.2;
-        integrate( sidarthe, x, ( double ) days, 350.0, 0.01, write_sidarthe );
+    tau   = 0.01;
+
+    lambda = 0.08;
+    rho = 0.02;
+    kappa = 0.02;
+    xi = 0.02;
+    sigma = 0.01;
+}
+
+// Weakened lockdown
+void restriction7() {
+    restriction5();
+    alfa = agerisk * 0.21*1.2;
+    beta1 = agerisk * 0.005;
+    gamma1 = agerisk * 0.11;
+    delta = agerisk * 0.005;
+    
+    epsilon = 0.2;
+    theta = 0.3705;
+    
+    zeta = 0.025;
+    eta = 0.025;
+    
+    mu = 0.008;
+    nu = 0.015;
+
+    tau = 0.01;
+
+    lambda = 0.08;
+    rho = 0.02;
+    kappa = 0.02;
+    xi = 0.02;
+    sigma = 0.01;
+}
+
+// Widespread testing
+void restriction8() {
+    restriction5();
+    alfa = 0.21;
+    beta1 = 0.005;
+    gamma1 = 0.11;
+    delta = 0.005;
+    
+    epsilon = 0.2*2;
+    theta = 0.3705;
+    
+    zeta = 0.0250;
+    eta = 0.0250;
+    
+    mu = 0.008;
+    nu = 0.0150;
+    
+    tau = 0.01;
+    
+    lambda = 0.08;
+    rho = 0.02;
+    kappa = 0.02;
+    xi = 0.02;
+    sigma = 0.01;
+}
+
+// Weakened lockdown with widespread testing
+void restriction9() {
+    restriction5();
+    alfa = 0.21;
+    beta1 = 0.005;
+    gamma1 = 0.11;
+    delta = 0.005;
+    
+    epsilon =  0.2*3;
+    theta = 0.3705;
+    
+    zeta = 0.025;
+    eta = 0.025;
+    
+    mu = 0.008;
+    nu = 0.0150;
+    
+    tau = 0.01;
+    
+    lambda = 0.08;
+    rho = 0.02;
+    kappa = 0.02;
+    xi = 0.02;
+    sigma = 0.01;
+}
+
+void set_restriction(int restriction) {
+    if (restriction == 0) {
+        restriction0();
+    } else if (restriction == 1) {
+        restriction1();
+    } else if (restriction == 2) {
+        restriction2();
+    } else if (restriction == 3) {
+        restriction3();
+    } else if (restriction == 4) {
+        restriction4();
+    } else if (restriction == 5) {
+        restriction5();
+    } else if (restriction == 6) {
+        restriction6();
+    } else if (restriction == 7) {
+        restriction7();
+    } else if (restriction == 8) {
+        restriction8();
+    } else {
+        restriction9();
+    }
+}
+
+int main(int argc, char **argv)
+{
+
+    getArguments(argc, argv);
+
+    double S0 = 1.0 - 200.0/population - 20.0/population - 1.0/population - 2.0/population - 0.0 - 0.0 - 0.0;
+    
+    // Initial state
+    //             S[0]      I[1]              D[2]             A[3]           R[4]        T[5] H[6] E[7] x[8] x[9]
+    state_type x = {S0, 200.0/population, 20.0/population, 1.0/population, 2.0/population, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+    double start_integrate = 0.0;
+    double end_integrate = days.at(0);
+    
+    set_restriction(0);
+    integrate(sidarthe, x, 0.0, end_integrate, 0.01, write_sidarthe);
+    
+    for (int i = 0; i < (int) days.size(); i++) {
+        
+        if (i == (int) days.size() - 1) {
+            start_integrate = days.at(i);
+            end_integrate = end_day;
+        } else {
+            start_integrate = days.at(i);
+            end_integrate = days.at(i + 1);
+        }
+
+        set_restriction(restrictions.at(i));
+        integrate(sidarthe, x, start_integrate, end_integrate, 0.01, write_sidarthe);
     }
 
     return 0;
