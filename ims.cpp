@@ -205,7 +205,8 @@ void restriction0() {
     sigma = 0.0171;
 }
 
-// Basic social distancing (awareness, schools closed)
+// Introduction of basic social distancing, awareness of the epidemic,
+// hygiene and behavioral recommendations, and early measures by gov
 // Days 4-12 in original simulation
 void restriction1() {
     restriction0();
@@ -215,14 +216,17 @@ void restriction1() {
     delta = agerisk * 0.0057;
 }
 
-// Screening limited to / focused on symptomatic subjects
+// Asymptomatic individuals were almost no longer detected,
+// screening focused on symptomatic individuals
 // Days 12-22 in original simulation
 void restriction2() {
     restriction1();
     epsilon = 0.1425;
 }
 
-// Social distancing: mild lockdown
+// Partially incomplete lockdown, of which the effectiveness was
+// reduced by the movement of people from the north to the south of Italy
+// when the country-wide lockdown was announced but not yet enforced
 // Days 22-28 in original simulation
 void restriction3() {
     restriction2();
@@ -245,7 +249,7 @@ void restriction3() {
     sigma = 0.0171;
 }
 
-// Social distancing: strong lockdown
+// National lockdown
 // Days 28-38 in original simulation
 void restriction4() {
     restriction3();
