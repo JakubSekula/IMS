@@ -159,10 +159,10 @@ void write_sidarthe(const state_type &x , const double t) {
     
     // Write cumulated numbers
     if (format == 1) {
-        cout << t << ' ' << x[9] << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << x[8] << ' ' << x[2] + x[4] + x[5] << ' ' << x[2] + x[4] + x[5] + x[7] + x[8] << endl;
+        cout << t << ' ' << x[9] << ' ' << x[1] + x[2] + x[3] + x[4] + x[5] << ' ' << x[6] << ' ' << x[ 7 ] << ' ' << x[2] + x[4] + x[5] + x[7] + x[8] << ' ' << x[2] + x[4] + x[5] << ' ' << x[8] << endl;
     
     // Write actual cases
-    } else if (format == 2) {
+    } else if (format == 2 || format == 0) {
         cout << t << ' ' << x[1] << ' ' << x[2] << ' ' << x[3] << ' ' << x[ 4 ] << ' ' << x[ 5 ] << endl;
     
     // Deaths and cumulated cases
