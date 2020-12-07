@@ -57,6 +57,12 @@ exp6-10:
 exp6-13:
 	@./ims -d 13 -r 5 -e 350 -f 4
 
+exp7-full:
+	@./ims -d 4,12,22,28,38 -r 1,2,3,4,5 -e 350 -f 4
+
+exp7-half:
+	@./ims -d 2,6,11,14,19 -r 1,2,3,4,5 -e 350 -f 4
+
 clean:
 	rm $(proj)
 	rm $(proj)_out
